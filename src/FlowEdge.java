@@ -1,23 +1,37 @@
+/**
+ * Name: Radhika Ranasinghe
+ * IIT ID: 2018199
+ * UoW ID: W1761764
+ */
+import java.util.Objects;
+
 public class FlowEdge {
+    private final int u;
     private final int v;
-    private final int w;
     private final int capacity;
     private int flow;
 
 
-    public FlowEdge(int v, int w, int capacity) {
+    public FlowEdge(int u, int v, int capacity) {
+        this.u = u;
         this.v = v;
-        this.w = w;
         this.capacity = capacity;
         this.flow = 0;
     }
 
-    public int from() {
-        return v;
+    public FlowEdge(int u, int v, int capacity, int flow) {
+        this.u = u;
+        this.v = v;
+        this.capacity = capacity;
+        this.flow = flow;
     }
 
-    public int to() {
-        return w;
+    public int getU() {
+        return u;
+    }
+
+    public int getV() {
+        return v;
     }
 
     public int getCapacity() {
@@ -29,39 +43,39 @@ public class FlowEdge {
     }
 
     public int other(int vertex) {
-        if (vertex == v) {
-            return w;
-        } else if (vertex == w) {
+        if (vertex == u) {
             return v;
+        } else if (vertex == v) {
+            return u;
         } else {
             throw new IllegalArgumentException("Invalid ending vertex");
         }
     }
 
     public int residualCapacityTo(int vertex) {
-        if (vertex == v) {
+        if (vertex == u) {
             return flow;
-        } else if (vertex == w) {
+        } else if (vertex == v) {
             return capacity - flow;
         } else {
             throw new IllegalArgumentException("Invalid ending vertex");
         }
     }
 
-    public void addResidualFlowTo(int vertex, double delta) {
-        if (!(delta >= 0.0)) {
-            throw new IllegalArgumentException("Delta must be non-negative");
+    public void addResidualFlowTo(int vertex, int bottleNeckCapacity) {
+        if (!(bottleNeckCapacity >= 0)) {
+            throw new IllegalArgumentException("Bottle Neck Capacity must be non-negative");
         }
 
-        if (vertex == v) {
-            flow -= delta; // backward edge
-        } else if (vertex == w) {
-            flow += delta; // forward edge
+        if (vertex == u) {
+            flow -= bottleNeckCapacity; // backward edge
+        } else if (vertex == v) {
+            flow += bottleNeckCapacity; // forward edge
         } else {
             throw new IllegalArgumentException("Invalid ending vertex");
         }
 
-        if (!(flow >= 0.0)) {
+        if (!(flow >= 0)) {
             throw new IllegalArgumentException("The Flow of the edge is negative");
         }
         if (!(flow <= capacity)) {
@@ -70,6 +84,19 @@ public class FlowEdge {
     }
 
     public String toString() {
-        return String.format("%d->%d %d %d", v, w, capacity, flow);
+        return String.format("%d->%d %d %d", u, v, capacity, flow);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FlowEdge)) return false;
+        FlowEdge flowEdge = (FlowEdge) o;
+        return u == flowEdge.u && v == flowEdge.v && getCapacity() == flowEdge.getCapacity();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(u, v, getCapacity(), getFlow());
     }
 }
