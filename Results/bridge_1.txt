@@ -8,4 +8,4 @@ The Flow Network Graph is as follows:
 5:  
 
 Max flow value = 2
-Time Elapsed :1ms
+Time Elapsed :2ms
